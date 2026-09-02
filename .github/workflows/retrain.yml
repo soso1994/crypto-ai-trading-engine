@@ -1,0 +1,46 @@
+name: Retrain and Autolabel
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # daily at 02:00 UTC
+  workflow_dispatch:
+
+jobs:
+  autolabel-and-train:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r server/src/trainer/requirements.txt
+          pip install psycopg2-binary
+
+      - name: Run autolabel
+        run: |
+          python server/src/trainer/autolabel.py --no-input || true
+
+      - name: Run trainer
+        run: |
+          if [ -f labeled_trades.csv ]; then
+            python server/src/trainer/train.py --input labeled_trades.csv --out-model model_$(date +%s).txt
+          else
+            echo "No labeled_trades.csv found, skipping training"
+          fi
+
+      - name: Upload model artifact (if created)
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-model
+          path: |
+            model_*.txt
+            shap_summary.json
