@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "MarketTick",
+  "namespace": "com.crypto",
+  "fields": [
+    {"name": "source", "type": "string"},
+    {"name": "symbol", "type": "string"},
+    {"name": "ts", "type": "long"},
+    {"name": "price", "type": "double"}
+  ]
+}
