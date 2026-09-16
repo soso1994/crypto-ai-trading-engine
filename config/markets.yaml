@@ -1,0 +1,123 @@
+# Markets configuration - list of symbols and basic market params
+
+markets:
+  - symbol: BTCUSDT
+    exchange: binance
+    base: BTC
+    quote: USDT
+    tick_size: 0.01
+    lot_size: 0.0001
+  - symbol: ETHUSDT
+    exchange: binance
+    base: ETH
+    quote: USDT
+    tick_size: 0.01
+    lot_size: 0.001
+  - symbol: SOLUSDT
+    exchange: binance
+    base: SOL
+    quote: USDT
+    tick_size: 0.0001
+    lot_size: 0.01
+  - symbol: ADAUSDT
+    exchange: binance
+    base: ADA
+    quote: USDT
+    tick_size: 0.0001
+    lot_size: 1
+  - symbol: BNBUSDT
+    exchange: binance
+    base: BNB
+    quote: USDT
+    tick_size: 0.001
+    lot_size: 0.001
+  - symbol: XRPUSDT
+    exchange: binance
+    base: XRP
+    quote: USDT
+    tick_size: 0.0001
+    lot_size: 1
+  - symbol: LTCUSDT
+    exchange: binance
+    base: LTC
+    quote: USDT
+    tick_size: 0.01
+    lot_size: 0.001
+  - symbol: DOTUSDT
+    exchange: binance
+    base: DOT
+    quote: USDT
+    tick_size: 0.0001
+    lot_size: 0.01
+  - symbol: DOGEUSDT
+    exchange: binance
+    base: DOGE
+    quote: USDT
+    tick_size: 0.000001
+    lot_size: 1
+  - symbol: MATICUSDT
+    exchange: binance
+    base: MATIC
+    quote: USDT
+    tick_size: 0.0001
+    lot_size: 0.1
+  - symbol: AVAXUSDT
+    exchange: binance
+    base: AVAX
+    quote: USDT
+    tick_size: 0.0001
+    lot_size: 0.01
+  - symbol: LINKUSDT
+    exchange: binance
+    base: LINK
+    quote: USDT
+    tick_size: 0.0001
+    lot_size: 0.1
+  - symbol: UNIUSDT
+    exchange: binance
+    base: UNI
+    quote: USDT
+    tick_size: 0.0001
+    lot_size: 0.1
+  - symbol: BCHUSDT
+    exchange: binance
+    base: BCH
+    quote: USDT
+    tick_size: 0.01
+    lot_size: 0.001
+  - symbol: XLMUSDT
+    exchange: binance
+    base: XLM
+    quote: USDT
+    tick_size: 0.0001
+    lot_size: 1
+  - symbol: SUSHIUSDT
+    exchange: binance
+    base: SUSHI
+    quote: USDT
+    tick_size: 0.0001
+    lot_size: 0.1
+  - symbol: AAVEUSDT
+    exchange: binance
+    base: AAVE
+    quote: USDT
+    tick_size: 0.01
+    lot_size: 0.01
+  - symbol: COMPUSDT
+    exchange: binance
+    base: COMP
+    quote: USDT
+    tick_size: 0.01
+    lot_size: 0.01
+  - symbol: THETAUSDT
+    exchange: binance
+    base: THETA
+    quote: USDT
+    tick_size: 0.0001
+    lot_size: 0.1
+  - symbol: FILUSDT
+    exchange: binance
+    base: FIL
+    quote: USDT
+    tick_size: 0.0001
+    lot_size: 0.01
