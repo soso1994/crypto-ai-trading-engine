@@ -1,4 +1,4 @@
-pyyaml
-requests
-pandas
-pytest
+pandas>=2.0,<3
+PyYAML>=6.0,<7
+requests>=2.31,<3
+pytest>=7.4,<9

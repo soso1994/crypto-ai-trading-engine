@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crypto-ai-backtester"
+version = "0.1.0"
+description = "Deterministic replay tools for the crypto AI trading engine"
+requires-python = ">=3.10"
+dependencies = [
+  "pandas>=2.0,<3",
+  "PyYAML>=6.0,<7",
+  "requests>=2.31,<3",
+]
+
+[project.scripts]
+crypto-replay = "cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["backtester/tests"]

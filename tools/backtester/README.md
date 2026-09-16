@@ -1,10 +1,25 @@
-# Backtester scaffold
+# Backtester
 
-This directory contains a minimal deterministic replay/backtester scaffold and a simple pytest for the replay function.
+This directory contains the deterministic replay package and a symbol-aware CLI.
 
-How to run tests:
+## Run tests
 
-1. python -m venv .venv
-2. source .venv/bin/activate
-3. pip install -r requirements.txt
-4. pytest -q
+```bash
+cd tools/backtester
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+pytest -q
+```
+
+## Run a replay
+
+Start the mock ingest service first, then run:
+
+```bash
+cd tools/backtester
+python cli.py --symbol BTCUSDT --source http://localhost:8081/mock_stream
+```
+
+The CLI accepts a JSON endpoint or a local JSON file containing objects with
+`symbol`, `ts`, and `price`. It never places real orders.
