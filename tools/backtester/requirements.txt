@@ -1,4 +1,4 @@
-# requirements for backtester
-
-pytest==7.4.0
-pandas==2.2.2
+pyyaml
+requests
+pandas
+pytest

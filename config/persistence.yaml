@@ -1,0 +1,9 @@
+# Persistence path templates
+
+persistence:
+  raw_template: "s3://<bucket>/raw/{symbol}/YYYY/MM/DD/{symbol}_raw.parquet"
+  local_template: "data/raw/{symbol}/YYYY/MM/DD/{symbol}_raw.parquet"
+
+# Usage
+# - Replace <bucket> with your S3 bucket name in production.
+# - Tools/readers should replace {symbol} with e.g. BTCUSDT and transform date tokens.
