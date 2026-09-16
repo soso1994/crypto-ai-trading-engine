@@ -1,0 +1,7 @@
+PR_READY: feat/web-dashboard
+
+This branch is prepared for pull request review. The PR body file is at: .github/prs/feat-web-dashboard-pr.md
+Suggested next steps:
+- Open PR in GitHub UI or use gh CLI
+- Assign reviewers and labels
+- Add VERCEL_TOKEN secret if you want automated deploys
