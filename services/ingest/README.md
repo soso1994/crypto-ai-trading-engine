@@ -1,58 +1,18 @@
-"""Flask mock ingest service.
+# Ingest service
 
-This service intentionally stays in mock mode until real market-data credentials
-and a production adapter are configured. It reads the config-based symbols and
-emits mock payloads for them, while offering a safe gateway for future Binance
-adapter integration.
-"""
+The service has two intentionally separate modes:
 
-from flask import Flask, jsonify
-import time
-import random
-import os
-import yaml
+- `GET /mock_stream` emits deterministic-shape mock ticks for all configured
+  symbols.
+- `GET /live_snapshot?symbol=BTCUSDT` reads the public Binance ticker endpoint.
 
-try:
-    from adapters.binance import get_market_symbols
-except ImportError:
-    import sys
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-    from adapters.binance import get_market_symbols
+The live endpoint is read-only. It does not require API credentials and cannot
+place orders. Set `BINANCE_BASE_URL` to a compatible endpoint for testing.
 
-app = Flask(__name__)
+Run locally from the repository root:
 
-
-def load_symbols():
-    symbols = get_market_symbols()
-    if symbols:
-        return symbols
-    # fallback safe list
-    return ['BTCUSDT', 'ETHUSDT', 'SOLUSDT']
-
-
-SYMBOLS = load_symbols()
-
-
-@app.route('/health')
-def health():
-    return jsonify({"status": "ok", "symbols": SYMBOLS})
-
-
-@app.route('/mock_stream')
-def mock_stream():
-    """Return mock price payloads for all configured symbols."""
-    now_ts = int(time.time())
-    data = []
-    for sym in SYMBOLS:
-        price = round(random.uniform(10.0, 50000.0), 6)
-        data.append({"source": "mock", "symbol": sym, "ts": now_ts, "price": price})
-    return jsonify(data)
-
-
-@app.route('/symbols')
-def symbols_route():
-    return jsonify({"symbols": SYMBOLS})
-
-
-if __name__ == '__main__':
-    app.run(port=8081)
+```bash
+pip install -r services/ingest/requirements.txt
+python services/ingest/services/ingest/main.py
+curl http://localhost:8081/live_snapshot?symbol=BTCUSDT
+```
