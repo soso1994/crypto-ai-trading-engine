@@ -1,13 +1,12 @@
-# Paper-trading risk controls
+# Risk controls for paper trading
 
-Paper mode now enforces local safety limits:
+This patch adds the safe defaults and risk validation layer:
 
-- maximum order notional: `PAPER_MAX_ORDER_NOTIONAL_USDT` (default `10000`)
-- maximum open positions: `PAPER_MAX_OPEN_POSITIONS` (default `5`)
-- maximum daily realized loss: `PAPER_MAX_DAILY_LOSS_USDT` (default `1000`)
-- sells cannot exceed an existing paper position
-- account and risk status are available through `/paper/account`,
-  `/paper/summary`, and `/paper/risk`
+- max order notional: `1000 USDT`
+- max open positions: `3`
+- max daily loss: `3000 USDT`
+- reject invalid side/size/price combinations
+- reject order if loss limit is reached
+- expose `/paper/risk` endpoint for the dashboard
 
-These controls apply only to virtual paper state. No exchange or live account is
-accessed.
+No live funds or exchange access are involved.
