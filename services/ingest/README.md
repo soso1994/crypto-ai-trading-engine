@@ -1,18 +1,16 @@
 # Ingest service
 
-The service has two intentionally separate modes:
+The service supports mock data and read-only Binance Spot public data:
 
-- `GET /mock_stream` emits deterministic-shape mock ticks for all configured
-  symbols.
-- `GET /live_snapshot?symbol=BTCUSDT` reads the public Binance ticker endpoint.
+- `GET /mock_stream`
+- `GET /live_snapshot?symbol=BTCUSDT`
+- `GET /live_klines?symbol=BTCUSDT&interval=15m&limit=100`
 
-The live endpoint is read-only. It does not require API credentials and cannot
-place orders. Set `BINANCE_BASE_URL` to a compatible endpoint for testing.
-
-Run locally from the repository root:
+No API key, secret, account access, or order placement is used. The kline route
+normalizes Binance OHLCV rows for the later indicator and backtest stages.
 
 ```bash
 pip install -r services/ingest/requirements.txt
 python services/ingest/services/ingest/main.py
-curl http://localhost:8081/live_snapshot?symbol=BTCUSDT
+curl 'http://localhost:8081/live_klines?symbol=BTCUSDT&interval=15m&limit=10'
 ```
