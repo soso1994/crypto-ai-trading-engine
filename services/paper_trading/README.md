@@ -1,19 +1,13 @@
-# Paper trading scaffold
+# Paper-trading risk controls
 
-This module creates a safe simulation loop for virtual cash and paper positions.
-No live funds are used.
+Paper mode now enforces local safety limits:
 
-Run locally:
+- maximum order notional: `PAPER_MAX_ORDER_NOTIONAL_USDT` (default `10000`)
+- maximum open positions: `PAPER_MAX_OPEN_POSITIONS` (default `5`)
+- maximum daily realized loss: `PAPER_MAX_DAILY_LOSS_USDT` (default `1000`)
+- sells cannot exceed an existing paper position
+- account and risk status are available through `/paper/account`,
+  `/paper/summary`, and `/paper/risk`
 
-```bash
-python services/paper_trading/app.py
-curl http://localhost:8090/paper/account
-```
-
-Then a sample order:
-
-```bash
-curl -X POST http://localhost:8090/paper/order \
-  -H 'Content-Type: application/json' \
-  -d '{"symbol":"BTCUSDT","side":"buy","size":0.1,"price":52000}'
-```
+These controls apply only to virtual paper state. No exchange or live account is
+accessed.
