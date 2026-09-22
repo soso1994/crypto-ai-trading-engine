@@ -31,22 +31,31 @@ def paper_risk():
 
 @app.route('/paper/history')
 def paper_history():
-    state = get_state()
-    return jsonify({"mode": "paper", "orders": state.orders})
+    return jsonify({"mode": "paper", "orders": get_state().orders})
 
 
 @app.route('/paper/reset', methods=['POST'])
 def paper_reset():
-    reset_state()
-    return jsonify(account_payload()), 200
+    return jsonify({
+        "mode": "paper",
+        "cash_usdt": reset_state().cash_usdt,
+        "realized_pnl": 0.0,
+        "total_trades": 0,
+        "positions": [],
+        "risk": risk_status(),
+    })
 
 
 @app.route('/paper/order', methods=['POST'])
 def paper_order():
     payload = request.get_json(silent=True) or {}
     try:
-        result = simulate_order(payload.get('symbol'), payload.get('side'),
-                                float(payload.get('size', 0)), float(payload.get('price', 0)))
+        result = simulate_order(
+            payload.get('symbol'),
+            payload.get('side'),
+            float(payload.get('size', 0)),
+            float(payload.get('price', 0)),
+        )
         return jsonify(result), 200
     except (TypeError, ValueError) as exc:
         return jsonify({"error": str(exc), "mode": "paper"}), 400
@@ -55,9 +64,14 @@ def paper_order():
 @app.route('/paper/summary')
 def paper_summary():
     state = get_state()
-    return jsonify({"mode": "paper", "cash_usdt": state.cash_usdt,
-                    "positions": len(state.positions), "total_trades": state.total_trades,
-                    "realized_pnl": state.realized_pnl, "risk": risk_status(state)})
+    return jsonify({
+        "mode": "paper",
+        "cash_usdt": state.cash_usdt,
+        "positions": len(state.positions),
+        "total_trades": state.total_trades,
+        "realized_pnl": state.realized_pnl,
+        "risk": risk_status(state),
+    })
 
 
 if __name__ == '__main__':
