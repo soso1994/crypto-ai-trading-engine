@@ -1,10 +1,4 @@
-"""Safe paper-trading engine with configurable risk controls.
-
-This module never calls an exchange. Orders only change the local virtual state.
-Risk limits can be configured with environment variables for paper experiments:
-PAPER_MAX_ORDER_NOTIONAL_USDT, PAPER_MAX_OPEN_POSITIONS, and
-PAPER_MAX_DAILY_LOSS_USDT.
-"""
+"""Safe paper-trading engine with configurable risk controls."""
 
 from __future__ import annotations
 
@@ -18,18 +12,22 @@ from typing import Dict, List, Optional
 STATE_PATH = Path(__file__).resolve().parents[2] / "data" / "paper_trading_state.json"
 
 
+def current_trading_day() -> str:
+    return datetime.now(timezone.utc).date().isoformat()
+
+
 @dataclass(frozen=True)
 class RiskLimits:
-    max_order_notional_usdt: float = 10_000.0
-    max_open_positions: int = 5
-    max_daily_loss_usdt: float = 1_000.0
+    max_order_notional_usdt: float = 1000.0
+    max_open_positions: int = 3
+    max_daily_loss_usdt: float = 3000.0
 
     @classmethod
     def from_environment(cls) -> "RiskLimits":
         return cls(
-            max_order_notional_usdt=float(os.getenv("PAPER_MAX_ORDER_NOTIONAL_USDT", "10000")),
-            max_open_positions=int(os.getenv("PAPER_MAX_OPEN_POSITIONS", "5")),
-            max_daily_loss_usdt=float(os.getenv("PAPER_MAX_DAILY_LOSS_USDT", "1000")),
+            max_order_notional_usdt=float(os.getenv("PAPER_MAX_ORDER_NOTIONAL_USDT", "1000")),
+            max_open_positions=int(os.getenv("PAPER_MAX_OPEN_POSITIONS", "3")),
+            max_daily_loss_usdt=float(os.getenv("PAPER_MAX_DAILY_LOSS_USDT", "3000")),
         )
 
     def validate(self) -> None:
@@ -59,6 +57,7 @@ class PaperTradingState:
     total_trades: int = 0
     daily_realized_pnl: float = 0.0
     risk_halted: bool = False
+    trading_day: str = field(default_factory=current_trading_day)
 
     def to_dict(self) -> Dict[str, object]:
         return {
@@ -67,6 +66,7 @@ class PaperTradingState:
             "daily_realized_pnl": self.daily_realized_pnl,
             "risk_halted": self.risk_halted,
             "total_trades": self.total_trades,
+            "trading_day": self.trading_day,
             "positions": [vars(p) for p in self.positions],
             "orders": self.orders,
         }
@@ -80,17 +80,27 @@ class PaperTradingState:
                 payload = json.load(handle)
         except (json.JSONDecodeError, OSError):
             return cls()
-        return cls(
+        state = cls(
             cash_usdt=float(payload.get("cash_usdt", 100000.0)),
             realized_pnl=float(payload.get("realized_pnl", 0.0)),
             daily_realized_pnl=float(payload.get("daily_realized_pnl", 0.0)),
             risk_halted=bool(payload.get("risk_halted", False)),
             total_trades=int(payload.get("total_trades", 0)),
+            trading_day=str(payload.get("trading_day", current_trading_day())),
             positions=[Position(**{key: item.get(key, "") for key in
                 ("symbol", "side", "size", "entry_price", "created_at")})
                 for item in payload.get("positions", [])],
             orders=list(payload.get("orders", [])),
         )
+        state.ensure_current_day()
+        return state
+
+    def ensure_current_day(self) -> None:
+        today = current_trading_day()
+        if self.trading_day != today:
+            self.trading_day = today
+            self.daily_realized_pnl = 0.0
+            self.risk_halted = False
 
     def save(self) -> None:
         STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -99,11 +109,20 @@ class PaperTradingState:
 
 
 def get_state() -> PaperTradingState:
-    return PaperTradingState.load()
+    state = PaperTradingState.load()
+    state.ensure_current_day()
+    return state
+
+
+def reset_state() -> PaperTradingState:
+    state = PaperTradingState()
+    state.save()
+    return state
 
 
 def risk_status(state: Optional[PaperTradingState] = None, limits: Optional[RiskLimits] = None) -> Dict[str, object]:
     state = state or get_state()
+    state.ensure_current_day()
     limits = limits or RiskLimits.from_environment()
     limits.validate()
     loss_used = max(0.0, -state.daily_realized_pnl)
@@ -114,6 +133,7 @@ def risk_status(state: Optional[PaperTradingState] = None, limits: Optional[Risk
         "max_daily_loss_usdt": limits.max_daily_loss_usdt,
         "daily_loss_used_usdt": loss_used,
         "open_positions": len(state.positions),
+        "trading_day": state.trading_day,
     }
 
 

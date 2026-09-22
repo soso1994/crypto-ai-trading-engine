@@ -2,7 +2,7 @@
 
 from flask import Flask, jsonify, request
 
-from paper_trading import get_state, risk_status, simulate_order
+from paper_trading import get_state, reset_state, risk_status, simulate_order
 
 app = Flask(__name__)
 
@@ -27,6 +27,18 @@ def paper_account():
 @app.route('/paper/risk')
 def paper_risk():
     return jsonify(risk_status())
+
+
+@app.route('/paper/history')
+def paper_history():
+    state = get_state()
+    return jsonify({"mode": "paper", "orders": state.orders})
+
+
+@app.route('/paper/reset', methods=['POST'])
+def paper_reset():
+    reset_state()
+    return jsonify(account_payload()), 200
 
 
 @app.route('/paper/order', methods=['POST'])
