@@ -5,6 +5,7 @@ ADAPTER_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 if ADAPTER_ROOT not in sys.path: sys.path.insert(0, ADAPTER_ROOT)
 from adapters.binance import fetch_klines, fetch_snapshots, get_market_symbols
 from indicators import build_signal
+from signals import build_signal_contract
 app = Flask(__name__)
 SYMBOLS = get_market_symbols() or ['BTCUSDT', 'ETHUSDT', 'SOLUSDT']
 @app.route('/health')
@@ -36,8 +37,9 @@ def live_signal():
     symbol, interval = request.args.get('symbol', 'BTCUSDT').upper(), request.args.get('interval', '15m')
     try:
         if symbol not in SYMBOLS: return jsonify({"error": "unsupported symbol", "symbol": symbol}), 400
-        signal = build_signal(fetch_klines(symbol, interval, 100))
-        return jsonify({"symbol": symbol, "interval": interval, "candles_used": 100, **signal})
+        indicators = build_signal(fetch_klines(symbol, interval, 100))
+        contract = build_signal_contract(symbol, interval, indicators)
+        return jsonify({"symbol": symbol, "interval": interval, "candles_used": 100, "indicators": indicators, "signal_contract": contract})
     except (TypeError, ValueError) as exc: return jsonify({"error": str(exc)}), 400
     except Exception as exc: return jsonify({"error": "signal data unavailable", "detail": str(exc)}), 502
 if __name__ == '__main__': app.run(port=8081)
