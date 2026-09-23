@@ -1,5 +1,5 @@
-"""Deterministic crypto market backtesting package."""
+"""Backtesting utilities for paper-only research."""
 
-from .replay import deterministic_replay
+from .strategy import BacktestConfig, backtest
 
-__all__ = ["deterministic_replay"]
+__all__ = ["BacktestConfig", "backtest"]

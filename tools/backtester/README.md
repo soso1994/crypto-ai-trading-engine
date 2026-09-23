@@ -1,25 +1,16 @@
-# Backtester
+# Stage 3: historical validation
 
-This directory contains the deterministic replay package and a symbol-aware CLI.
+The backtester now evaluates the paper-only signal strategy on candle history.
+It accounts for configurable fees and slippage and reports final equity, net PnL,
+return, win rate, profit factor, maximum drawdown, trades, and an equity curve.
 
-## Run tests
+Example:
 
-```bash
-cd tools/backtester
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-pytest -q
+```python
+from backtester.strategy import backtest
+from indicators import build_signal
+result = backtest(candles, build_signal)
 ```
 
-## Run a replay
-
-Start the mock ingest service first, then run:
-
-```bash
-cd tools/backtester
-python cli.py --symbol BTCUSDT --source http://localhost:8081/mock_stream
-```
-
-The CLI accepts a JSON endpoint or a local JSON file containing objects with
-`symbol`, `ts`, and `price`. It never places real orders.
+This is research tooling only. Results are not a promise of future returns and
+no live orders are sent.
