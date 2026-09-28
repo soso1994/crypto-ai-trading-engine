@@ -1,7 +1,7 @@
 from pathlib import Path
 import sys
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[2]  # Go up to repo root
 sys.path.insert(0, str(ROOT / 'services' / 'ingest'))
 
 from adapters import binance
