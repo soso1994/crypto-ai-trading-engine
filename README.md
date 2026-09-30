@@ -39,7 +39,7 @@ The application intentionally has no order execution, exchange credentials, or t
 ## Tests
 
 ```bash
-python -m pytest services/ingest/tests --cov=services.ingest --cov-report=term-missing
+python -m pytest services/ingest/tests --cov=services.ingest --cov-report=term-missing --cov-fail-under=95
 npm test --prefix web
 npm run build --prefix web
 ```
