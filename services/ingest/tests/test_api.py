@@ -78,7 +78,7 @@ def test_upstream_failures_are_reported_as_gateway_errors(candles):
     app.config["KLINE_FETCHER"] = unavailable
     response = app.test_client().get("/live_signal")
     assert response.status_code == 502
-    assert response.json == {"error": "Binance market data is unavailable"}
+    assert response.json == {"error": "Market data is temporarily unavailable"}
 
 
 def test_insufficient_candles_are_reported_as_gateway_errors():
@@ -86,7 +86,7 @@ def test_insufficient_candles_are_reported_as_gateway_errors():
     app.config["KLINE_FETCHER"] = lambda *_: []
     response = app.test_client().get("/live_signal")
     assert response.status_code == 502
-    assert response.json == {"error": "Binance returned insufficient candle data"}
+    assert response.json == {"error": "Market data is temporarily unavailable"}
 
 
 def test_invalid_kline_shape_is_reported_by_signal_and_performance_routes(candles):
@@ -127,7 +127,7 @@ def test_performance_endpoint_reports_upstream_errors():
     )
     response = app.test_client().get("/performance")
     assert response.status_code == 502
-    assert response.json == {"error": "Binance market data is unavailable"}
+    assert response.json == {"error": "Market data is temporarily unavailable"}
 
 
 def test_cors_is_enabled_for_dashboard_origin(client):

@@ -48,8 +48,8 @@ def create_app(testing=False):
         symbol, interval = parameters
         try:
             result = generate_signal(get_candles(symbol, interval), symbol, interval)
-        except MarketDataError as exception:
-            return jsonify(error=str(exception)), 502
+        except MarketDataError:
+            return jsonify(error="Market data is temporarily unavailable"), 502
         except (KeyError, TypeError, ValueError):
             return jsonify(error="Invalid market data"), 502
         return jsonify(result)
@@ -62,8 +62,8 @@ def create_app(testing=False):
         symbol, interval = parameters
         try:
             result = paper_performance(get_candles(symbol, interval), symbol, interval)
-        except MarketDataError as exception:
-            return jsonify(error=str(exception)), 502
+        except MarketDataError:
+            return jsonify(error="Market data is temporarily unavailable"), 502
         except (KeyError, TypeError, ValueError):
             return jsonify(error="Invalid market data"), 502
         return jsonify(result)
@@ -80,9 +80,9 @@ def create_app(testing=False):
                 result = generate_signal(get_candles(symbol, interval), symbol, interval)
                 websocket.send(json.dumps(result))
                 time.sleep(app.config["WS_INTERVAL_SECONDS"])
-            except MarketDataError as exception:
+            except MarketDataError:
                 try:
-                    websocket.send(json.dumps({"error": str(exception)}))
+                    websocket.send(json.dumps({"error": "Market data is temporarily unavailable"}))
                 except Exception:
                     pass
                 return

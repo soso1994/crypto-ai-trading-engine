@@ -75,4 +75,4 @@ def test_websocket_reports_market_data_errors(websocket_server):
     finally:
         if socket.connected:
             socket.close()
-    assert result == {"error": "Binance market data is unavailable"}
+    assert result == {"error": "Market data is temporarily unavailable"}
