@@ -30,6 +30,7 @@ def test_atr_uses_true_range_including_previous_close_gaps():
         (lambda: ema([1, 2], 0), "period must be a positive integer"),
         (lambda: rsi([1, 2], 2), "at least 3 values are required"),
         (lambda: macd([1, 2, 3], 26, 12), "fast period must be less than slow period"),
+        (lambda: atr([1], [0], [1], 2), "at least 2 candles are required"),
         (lambda: atr([2], [3], [2], 1), "high must be greater than or equal to low"),
         (lambda: atr([2], [1, 1], [2], 1), "highs, lows, and closes must have equal lengths"),
     ],

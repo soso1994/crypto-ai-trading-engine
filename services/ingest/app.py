@@ -80,6 +80,12 @@ def create_app(testing=False):
                 result = generate_signal(get_candles(symbol, interval), symbol, interval)
                 websocket.send(json.dumps(result))
                 time.sleep(app.config["WS_INTERVAL_SECONDS"])
+            except MarketDataError as exception:
+                try:
+                    websocket.send(json.dumps({"error": str(exception)}))
+                except Exception:
+                    pass
+                return
             except Exception:
                 return
 

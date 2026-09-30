@@ -27,7 +27,10 @@ def test_fetch_klines_normalizes_public_binance_response(monkeypatch):
     }
 
 
-@pytest.mark.parametrize("payload", [[], {"error": "bad"}, [[0, "bad"]]])
+@pytest.mark.parametrize(
+    "payload",
+    [[], {"error": "bad"}, [[0, "bad"]], [[index, "1", "3"] for index in range(35)]],
+)
 def test_fetch_klines_rejects_invalid_responses(monkeypatch, payload):
     response = Mock()
     response.json.return_value = payload
