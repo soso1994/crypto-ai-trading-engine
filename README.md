@@ -2,33 +2,44 @@
 
 A paper-only cryptocurrency signal API and responsive React dashboard. The service reads public Binance candle data and displays deterministic technical signals; it never places or routes trades.
 
-## Run locally
+## Run on your laptop (recommended)
 
-Requirements: Python 3.10+, Node.js 18+, and npm.
+Install Docker Desktop (Windows/macOS) or Docker Engine with the Compose plugin (Linux), then download the project by cloning it:
 
 ```bash
+git clone https://github.com/soso1994/crypto-ai-trading-engine.git
+cd crypto-ai-trading-engine
+docker compose up --build
+```
+
+On Windows, run the same commands in PowerShell after installing Git and Docker Desktop. You can also download the repository ZIP from GitHub, extract it, open a terminal in the extracted `crypto-ai-trading-engine` folder, and run `docker compose up --build`.
+
+The first launch downloads dependencies and builds the services, so it may take a few minutes. Keep the terminal and Docker Desktop open while using the app. Open <http://localhost:3000> for the dashboard; the API is at <http://localhost:5000>. To stop the app, press `Ctrl+C` and run `docker compose down` from the project folder.
+
+No Binance API key or account is required. The laptop must have an internet connection to download dependencies and fetch public Binance market data.
+
+## Run without Docker (development)
+
+Requirements: Python 3.10+, Node.js 18+, and npm. Start the API in one terminal from the project folder:
+
+```sh
 python -m venv .venv
+# macOS/Linux:
 source .venv/bin/activate
+# Windows PowerShell instead:
+# .venv\Scripts\Activate.ps1
 python -m pip install -r services/ingest/requirements-dev.txt
 python -m services.ingest.app
 ```
 
-In another terminal:
+Leave that terminal running. Open a second terminal in the same project folder and start the dashboard:
 
-```bash
+```sh
 npm ci --prefix web
 npm run dev --prefix web
 ```
 
-Open <http://localhost:3000>. The Vite development server proxies REST and WebSocket requests to the API at <http://localhost:5000>. No Binance API key or account is required.
-
-## Docker Compose
-
-```bash
-docker compose up --build
-```
-
-The dashboard is available at <http://localhost:3000> and the API at <http://localhost:5000>. The production dashboard container serves a static React build with Nginx and proxies the API and WebSocket paths to Flask.
+Then open <http://localhost:3000>. The dashboard forwards API and WebSocket requests to the API on port `5000`.
 
 ## API and safety
 
